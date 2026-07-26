@@ -1,0 +1,10 @@
+{
+  "name": "Aventura de las Vocales",
+  "short_name": "Vocales",
+  "description": "Ambiente gamificado para aprender las vocales con actividades interactivas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff7ce",
+  "theme_color": "#fff7ce",
+  "icons": []
+}

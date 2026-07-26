@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ambiente gamificado de Lenguaje para niños de 4 a 6 años, basado en el modelo pedagógico 5E." />
+  <meta property="og:title" content="La aventura mágica de las vocales" />
+  <meta property="og:description" content="Una experiencia educativa premium para aprender las vocales con juegos, sonidos y narrativa." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#fff7ce" />
+  <title>La aventura de las vocales | Modelo 5E</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+<body>
+  <div id="splashScreen" class="splash-screen" role="dialog" aria-modal="true" aria-label="Pantalla de bienvenida">
+    <div class="splash-card">
+      <div class="splash-illustration" aria-hidden="true">
+        <div class="cloud cloud-one"></div>
+        <div class="cloud cloud-two"></div>
+        <div class="tree tree-one"></div>
+        <div class="tree tree-two"></div>
+        <div class="animal animal-rabbit">🐰</div>
+        <div class="animal animal-owl">🦉</div>
+      </div>
+      <h1>La aventura mágica de las vocales</h1>
+      <p>Un viaje colorido para aprender con música, juegos y cuentos.</p>
+      <div class="loading-bar"><span id="splashProgress"></span></div>
+      <div class="splash-actions">
+        <button id="startSplash" class="btn primary">Entrar a la aventura</button>
+        <button id="soundSplash" class="btn secondary" aria-pressed="true">🔊 Sonido activado</button>
+      </div>
+    </div>
+  </div>
+
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="topbar" aria-label="Navegación principal">
+    <a class="brand" href="#inicio" aria-label="Ir al inicio">
+      <span class="brand-mark">🌈</span>
+      <span>Aventura de las Vocales</span>
+    </a>
+    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mainNav">☰</button>
+    <nav id="mainNav" class="main-nav">
+      <a href="#inicio">Inicio</a>
+      <a href="#enganchar">Enganchar</a>
+      <a href="#explorar">Explorar</a>
+      <a href="#explicar">Explicar</a>
+      <a href="#elaborar">Elaborar</a>
+      <a href="#evaluar">Evaluar</a>
+    </nav>
+    <button id="soundToggle" class="icon-btn" aria-pressed="true" title="Activar o desactivar sonidos">🔊</button>
+  </header>
+
+  <div class="progress-shell" aria-label="Progreso de la aventura">
+    <div class="progress-meta">
+      <span>Progreso</span>
+      <strong id="progressText">0%</strong>
+    </div>
+    <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+    <div class="score-pill">⭐ <span id="scoreValue">0</span> estrellas</div>
+  </div>
+
+  <main id="contenido">
+    <section id="inicio" class="hero section">
+      <div class="hero-copy">
+        <span class="eyebrow">Lenguaje · Educación Inicial / 1.° EGB</span>
+        <h1>La aventura de las <span>vocales mágicas</span></h1>
+        <p>Una experiencia interactiva para reconocer, escuchar y relacionar las vocales A, E, I, O y U con palabras e imágenes del entorno.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#enganchar">Comenzar aventura 🚀</a>
+          <button class="btn secondary" id="welcomeSpeak">Escuchar bienvenida 🔊</button>
+          <button class="btn secondary" id="showInstructions">Instrucciones ✨</button>
+          <button class="btn secondary" id="readContent">Leer contenido 🔈</button>
+        </div>
+        <div class="student-card" aria-label="Perfil del estudiante">
+          <div class="student-head">
+            <div>
+              <h2>Tu perfil de explorador</h2>
+              <p id="studentSummary">Listo para descubrir nuevas vocales.</p>
+            </div>
+            <div id="avatarBadge" class="avatar-badge">🦊</div>
+          </div>
+          <div class="student-grid">
+            <label>
+              Nombre del explorador
+              <input id="studentNameInput" type="text" maxlength="16" placeholder="Tu nombre" />
+            </label>
+            <label>
+              Personaje
+              <select id="avatarSelect">
+                <option value="🦊">Zorro</option>
+                <option value="🐰">Conejo</option>
+                <option value="🦁">León</option>
+                <option value="🐻">Oso</option>
+              </select>
+            </label>
+          </div>
+          <div class="student-stats">
+            <div><strong id="studentLevel">Nivel 1</strong><span>Experiencia</span></div>
+            <div><strong id="studentPoints">0 ⭐</strong><span>Puntos</span></div>
+            <div><strong id="studentProgress">0/5 fases</strong><span>Progreso</span></div>
+            <div><strong id="studentBadge">🌈 Aprendiz</strong><span>Insignia</span></div>
+          </div>
+        </div>
+        <div class="curriculum-card">
+          <h2>Datos curriculares</h2>
+          <div class="curriculum-grid">
+            <p><strong>Área:</strong> Lengua y Literatura</p>
+            <p><strong>Tema:</strong> Reconocimiento de las vocales</p>
+            <p><strong>Edad:</strong> 4 a 6 años</p>
+            <p><strong>Duración:</strong> 40–50 minutos</p>
+            <p><strong>Objetivo:</strong> Identificar las vocales por su forma y sonido.</p>
+            <p><strong>Metodología:</strong> Modelo 5E + gamificación</p>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+        <div class="mascot">🦉</div>
+        <div class="vowel-orbit">
+          <span class="vowel a">A</span><span class="vowel e">E</span><span class="vowel i">I</span><span class="vowel o">O</span><span class="vowel u">U</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="team section compact" aria-labelledby="teamTitle">
+      <div class="section-heading"><span class="step-tag">Equipo docente</span><h2 id="teamTitle">Nuestros guías de aventura</h2></div>
+      <div class="team-grid">
+        <article class="teacher-card"><div class="avatar">👩‍🏫</div><h3>Nombre del integrante 1</h3><p>Docente guía · Presentación y fase Enganchar</p></article>
+        <article class="teacher-card"><div class="avatar">👨‍🏫</div><h3>Nombre del integrante 2</h3><p>Docente guía · Fases Explorar y Explicar</p></article>
+        <article class="teacher-card"><div class="avatar">👩‍💻</div><h3>Nombre del integrante 3</h3><p>Docente guía · Fases Elaborar y Evaluar</p></article>
+      </div>
+      <p class="edit-note">✏️ Reemplace estos nombres y roles con los integrantes reales del equipo.</p>
+    </section>
+
+    <section id="enganchar" class="section stage stage-yellow" data-stage="enganchar">
+      <div class="section-heading"><span class="step-tag">1. Enganchar</span><h2>¡Despierta tus saberes!</h2><p>Escucha la palabra y selecciona la vocal con la que comienza.</p></div>
+      <div class="game-card">
+        <div class="challenge-head"><span id="hookRound">Reto 1 de 5</span><span>+10 ⭐ por acierto</span></div>
+        <div id="hookEmoji" class="challenge-emoji">✈️</div>
+        <h3 id="hookWord">AVIÓN</h3>
+        <button class="listen-btn" id="hookListen">🔊 Escuchar palabra</button>
+        <div id="hookOptions" class="vowel-options" aria-label="Opciones de vocales"></div>
+        <p id="hookFeedback" class="feedback" aria-live="polite"></p>
+        <button id="hookNext" class="btn primary hidden">Siguiente reto →</button>
+      </div>
+    </section>
+
+    <section id="explorar" class="section stage stage-blue" data-stage="explorar">
+      <div class="section-heading"><span class="step-tag">2. Explorar</span><h2>Detectives de palabras</h2><p>Observa, escucha y descubre cómo se relacionan las imágenes con cada vocal.</p></div>
+      <div class="explore-layout">
+        <div class="discovery-panel">
+          <h3>Misión de indagación</h3>
+          <ol>
+            <li>Selecciona una tarjeta.</li>
+            <li>Escucha su palabra.</li>
+            <li>Piensa cuál es la vocal inicial.</li>
+            <li>Clasifícala en el cofre correcto.</li>
+          </ol>
+          <p class="critical-question">💭 ¿Qué tienen en común las palabras que empiezan con la misma vocal?</p>
+        </div>
+        <div class="sorting-game">
+          <div id="wordCards" class="word-cards"></div>
+          <div id="vowelBins" class="vowel-bins"></div>
+          <p id="sortFeedback" class="feedback" aria-live="polite"></p>
+          <button id="sortReset" class="btn secondary">Reiniciar clasificación</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="explicar" class="section stage stage-purple" data-stage="explicar">
+      <div class="section-heading"><span class="step-tag">3. Explicar</span><h2>Aprendemos con nuestros guías</h2><p>Contenido central y tres recursos complementarios integrados.</p></div>
+      <div class="video-card">
+        <div class="video-placeholder">
+          <div class="play-icon">▶</div>
+          <h3>Video explicativo de autoría propia</h3>
+          <p>Duración requerida: 3 a 5 minutos</p>
+          <small>Reemplace este bloque por el video final del equipo (YouTube, Drive o archivo MP4).</small>
+        </div>
+        <div class="video-script">
+          <h3>Guion sugerido</h3>
+          <p><strong>Inicio:</strong> saludo y presentación del reto.</p>
+          <p><strong>Desarrollo:</strong> forma, sonido y ejemplos de A, E, I, O y U.</p>
+          <p><strong>Cierre:</strong> repaso con imágenes y pregunta de reflexión.</p>
+        </div>
+      </div>
+      <div class="resource-grid">
+        <article class="resource-card"><div class="resource-icon">🗺️</div><h3>Infografía interactiva</h3><p>Toca cada vocal para escucharla y ver ejemplos.</p><div id="miniVowels" class="mini-vowels"></div></article>
+        <article class="resource-card"><div class="resource-icon">📖</div><h3>Cuento educativo</h3><p>“La fiesta de las vocales”, una lectura breve y contextualizada.</p><button id="storyBtn" class="btn secondary">Leer cuento</button></article>
+        <article class="resource-card"><div class="resource-icon">🎵</div><h3>Canción y ritmo</h3><p>Repite las vocales con una secuencia de palmas.</p><button id="songBtn" class="btn secondary">Escuchar ritmo</button></article>
+      </div>
+      <div id="storyModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="storyTitle" hidden>
+        <div class="modal-card"><button id="closeStory" class="modal-close" aria-label="Cerrar">×</button><h3 id="storyTitle">La fiesta de las vocales</h3><p>En el bosque mágico, la <strong>A</strong> llevó un avión, la <strong>E</strong> invitó a un elefante, la <strong>I</strong> encendió una isla brillante, la <strong>O</strong> abrazó a un oso y la <strong>U</strong> compartió muchas uvas. Juntas descubrieron que cada una tenía un sonido especial.</p><button id="readStory" class="btn primary">🔊 Escuchar cuento</button></div>
+      </div>
+    </section>
+
+    <section id="elaborar" class="section stage stage-green" data-stage="elaborar">
+      <div class="section-heading"><span class="step-tag">4. Elaborar</span><h2>Crea tu colección de vocales</h2><p>Aplica lo aprendido construyendo un mural digital.</p></div>
+      <div class="creative-grid">
+        <div class="creator-panel">
+          <label>1. Elige una vocal<select id="creativeVowel"><option>A</option><option>E</option><option>I</option><option>O</option><option>U</option></select></label>
+          <label>2. Escribe una palabra<input id="creativeWord" type="text" maxlength="20" placeholder="Ejemplo: árbol" /></label>
+          <label>3. Elige un dibujo<select id="creativeEmoji"><option>🌳</option><option>🐘</option><option>🏝️</option><option>🐻</option><option>🍇</option><option>✈️</option><option>⭐</option><option>🌈</option></select></label>
+          <button id="addCreation" class="btn primary">Agregar al mural ✨</button>
+          <p id="creativeFeedback" class="feedback" aria-live="polite"></p>
+        </div>
+        <div class="mural-wrap"><h3>Mi mural de palabras</h3><div id="mural" class="mural"><p class="mural-empty">Aquí aparecerán tus creaciones.</p></div></div>
+      </div>
+    </section>
+
+    <section id="evaluar" class="section stage stage-pink" data-stage="evaluar">
+      <div class="section-heading"><span class="step-tag">5. Evaluar</span><h2>Desafío final</h2><p>Evaluación digital con calificación y retroalimentación automática.</p></div>
+      <div class="quiz-shell">
+        <div id="quizIntro" class="quiz-intro"><div class="trophy">🏆</div><h3>¿Listo para demostrar lo aprendido?</h3><p>Responderás 10 preguntas. Al final recibirás tu puntaje y una insignia.</p><button id="startQuiz" class="btn primary">Iniciar evaluación</button></div>
+        <div id="quizArea" class="hidden"><div class="quiz-top"><span id="quizCounter"></span><span id="quizScore"></span></div><div class="quiz-progress"><div id="quizProgressBar"></div></div><h3 id="quizQuestion"></h3><div id="quizAnswers" class="quiz-answers"></div><p id="quizFeedback" class="feedback" aria-live="polite"></p><button id="quizNext" class="btn primary hidden">Continuar →</button></div>
+        <div id="quizResult" class="quiz-result hidden"></div>
+      </div>
+    </section>
+
+    <section class="section compact closing">
+      <div class="closing-card"><div class="closing-icon">🌟</div><div><h2>¡Misión cumplida!</h2><p>Has recorrido las cinco fases del modelo 5E y desarrollado reconocimiento auditivo, visual y semántico de las vocales.</p></div><button id="resetAll" class="btn secondary">Reiniciar aventura</button></div>
+    </section>
+  </main>
+
+  <div id="instructionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle" hidden>
+    <div class="modal-card instructions-card">
+      <button id="closeInstructions" class="modal-close" aria-label="Cerrar instrucciones">×</button>
+      <h3 id="instructionsTitle">¿Cómo jugar?</h3>
+      <ul>
+        <li>Escucha cada palabra con atención.</li>
+        <li>Elige la vocal inicial que corresponde.</li>
+        <li>Clasifica las imágenes en los cofres de vocales.</li>
+        <li>Completa el mural creativo y la evaluación final.</li>
+      </ul>
+      <button id="startFromInstructions" class="btn primary">Comenzar ahora</button>
+    </div>
+  </div>
+
+  <footer><p>Ambiente gamificado basado en el modelo pedagógico 5E · Proyecto académico</p><p>Diseño original, accesible y adaptable a dispositivos móviles.</p></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>

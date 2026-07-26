@@ -1,0 +1,13 @@
+{
+  "name": "aventura-vocales-5e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ambiente gamificado de Lenguaje basado en el modelo 5E",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
