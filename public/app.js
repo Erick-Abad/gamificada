@@ -2,6 +2,10 @@ const state={score:0,completed:new Set(),sound:true,studentName:'Explorador',ava
 const $=(s)=>document.querySelector(s);const $$=(s)=>[...document.querySelectorAll(s)];
 const toast=(msg)=>{const el=$('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)};
 let audioCtx=null;
+let speechReady=false;
+let availableVoices=[];
+let preferredVoice=null;
+
 function ensureAudio(){
   if(!audioCtx){
     const AudioCtx=window.AudioContext||window.webkitAudioContext;
@@ -44,13 +48,47 @@ function playCue(kind){
     setTimeout(()=>playTone([523,659],0.12,{type:'sine',volume:0.04}),90);
   }
 }
+function pickPreferredVoice(voices){
+  if(!voices?.length) return null;
+  const spanish=voices.find(v=>/^es(-|_)/i.test(v.lang||'')) ||
+                voices.find(v=>(v.lang||'').toLowerCase().includes('es')) ||
+                null;
+  return spanish || voices[0] || null;
+}
+function initSpeech(){
+  if(!('speechSynthesis' in window)) return;
+  availableVoices=window.speechSynthesis.getVoices();
+  preferredVoice=pickPreferredVoice(availableVoices);
+  speechReady=true;
+}
+if('speechSynthesis' in window){
+  initSpeech();
+  window.speechSynthesis.onvoiceschanged=()=>{
+    initSpeech();
+  };
+}
 const speak=(text)=>{
-  if(!state.sound)return;
-  const msg=text.toLowerCase();
+  if(!state.sound || !text) return;
+
+  const msg=String(text).toLowerCase();
   if(msg.includes('excelente')||msg.includes('correcta')||msg.includes('correcto')) playCue('correct');
   else if(msg.includes('inténtalo')||msg.includes('casi')||msg.includes('incorrect')) playCue('error');
   else if(msg.includes('evaluación')||msg.includes('terminada')||msg.includes('complet')) playCue('celebrate');
   else playCue('welcome');
+
+  if(!('speechSynthesis' in window)) return;
+  if(!speechReady) initSpeech();
+
+  try{
+    window.speechSynthesis.cancel();
+    const utter=new SpeechSynthesisUtterance(String(text));
+    utter.lang=(preferredVoice && preferredVoice.lang) ? preferredVoice.lang : 'es-ES';
+    if(preferredVoice) utter.voice=preferredVoice;
+    utter.rate=0.95;
+    utter.pitch=1.0;
+    utter.volume=1;
+    window.speechSynthesis.speak(utter);
+  }catch(_e){}
 };
 function addScore(n){state.score+=n;$('#scoreValue').textContent=state.score;localStorage.setItem('vowelScore',state.score);updateStudentProfile();}
 function complete(stage){if(!state.completed.has(stage)){state.completed.add(stage);updateProgress();localStorage.setItem('vowelCompleted',JSON.stringify([...state.completed]));updateStudentProfile();}}
@@ -78,7 +116,13 @@ function restore(){
   updateStudentProfile();
 }
 $('#menuBtn').onclick=()=>{const nav=$('#mainNav');nav.classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',nav.classList.contains('open'))};$$('.main-nav a').forEach(a=>a.onclick=()=>$('#mainNav').classList.remove('open'));
-$('#soundToggle').onclick=()=>{state.sound=!state.sound;$('#soundToggle').textContent=state.sound?'🔊':'🔇';$('#soundToggle').setAttribute('aria-pressed',String(state.sound));toast(state.sound?'Sonidos activados':'Sonidos desactivados')};
+$('#soundToggle').onclick=()=>{
+  state.sound=!state.sound;
+  if(!state.sound && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+  $('#soundToggle').textContent=state.sound?'🔊':'🔇';
+  $('#soundToggle').setAttribute('aria-pressed',String(state.sound));
+  toast(state.sound?'Sonidos activados':'Sonidos desactivados')
+};
 $('#welcomeSpeak').onclick=()=>speak('Bienvenidos a la aventura de las vocales mágicas. Prepárate para jugar, explorar y aprender.');
 $('#readContent').onclick=()=>speak('La aventura mágica de las vocales comienza con una historia, sigue con juegos, luego con explicaciones, creatividad y evaluación final.');
 $('#showInstructions').onclick=()=>{$('#instructionsModal').hidden=false};$('#closeInstructions').onclick=()=>{$('#instructionsModal').hidden=true};$('#startFromInstructions').onclick=()=>{$('#instructionsModal').hidden=true;document.querySelector('#enganchar').scrollIntoView({behavior:'smooth'});speak('Comencemos la misión');};
@@ -93,7 +137,14 @@ let splashValue=0;
 function tickSplash(){if(splashValue<100){splashValue+=7; splashProgress.style.width=`${splashValue}%`; setTimeout(tickSplash,120);} else { splashScreen.classList.add('hidden'); }}
 tickSplash();
 startSplash.onclick=()=>{splashScreen.classList.add('hidden'); toast('¡Comenzamos!');};
-soundSplash.onclick=()=>{state.sound=!state.sound; soundSplash.textContent=state.sound?'🔊 Sonido activado':'🔇 Sonido desactivado'; soundSplash.setAttribute('aria-pressed',String(state.sound)); $('#soundToggle').textContent=state.sound?'🔊':'🔇'; $('#soundToggle').setAttribute('aria-pressed',String(state.sound));};
+soundSplash.onclick=()=>{
+  state.sound=!state.sound;
+  if(!state.sound && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+  soundSplash.textContent=state.sound?'🔊 Sonido activado':'🔇 Sonido desactivado';
+  soundSplash.setAttribute('aria-pressed',String(state.sound));
+  $('#soundToggle').textContent=state.sound?'🔊':'🔇';
+  $('#soundToggle').setAttribute('aria-pressed',String(state.sound));
+};
 
 const hookData=[{e:'✈️',w:'AVIÓN',a:'A'},{e:'🐘',w:'ELEFANTE',a:'E'},{e:'🏝️',w:'ISLA',a:'I'},{e:'🐻',w:'OSO',a:'O'},{e:'🍇',w:'UVAS',a:'U'}];let hookIndex=0,hookLocked=false;
 function renderHook(){const q=hookData[hookIndex];$('#hookRound').textContent=`Reto ${hookIndex+1} de ${hookData.length}`;$('#hookEmoji').textContent=q.e;$('#hookWord').textContent=q.w;$('#hookFeedback').textContent='';$('#hookNext').classList.add('hidden');hookLocked=false;$('#hookOptions').innerHTML='';'AEIOU'.split('').forEach(v=>{const b=document.createElement('button');b.className='vowel-option';b.textContent=v;b.onclick=()=>answerHook(b,v,q.a);$('#hookOptions').appendChild(b)})}
