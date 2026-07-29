@@ -156,6 +156,22 @@ function renderSort(){selectedWord=null;sorted=0;$('#wordCards').innerHTML='';$(
 function placeWord(v,bin){if(selectedWord===null){toast('Primero selecciona una palabra');return}const x=sortWords[selectedWord],card=$(`.word-card[data-i="${selectedWord}"]`);if(x.v===v){bin.classList.add('done');bin.innerHTML=`${v}<small style="display:block;font:700 .75rem Nunito">${x.e}</small>`;card.disabled=true;card.style.opacity=.4;selectedWord=null;sorted++;addScore(10);$('#sortFeedback').textContent='¡Clasificación correcta!';if(sorted===sortWords.length){complete('explorar');speak('Misión completada')}}else{$('#sortFeedback').textContent='Inténtalo otra vez. Escucha con atención el primer sonido.';speak('Inténtalo otra vez')}}
 $('#sortReset').onclick=renderSort;renderSort();
 
+$('#saveReflection').onclick=()=>{
+  const input=$('#exploreReflectionInput');
+  const feedback=$('#reflectionFeedback');
+  if(!input || !feedback) return;
+  const text=(input.value||'').trim();
+  if(text.length<20){
+    feedback.textContent='Escribe una reflexión más completa (mínimo 20 caracteres).';
+    speak('Escribe una reflexión más completa');
+    return;
+  }
+  localStorage.setItem('exploreReflection', text);
+  feedback.textContent='¡Excelente reflexión! Estás pensando como un detective de palabras.';
+  speak('Excelente reflexión. Muy buen análisis.');
+  addScore(10);
+};
+
 'AEIOU'.split('').forEach(v=>{const b=document.createElement('button');b.className='mini-vowel';b.textContent=v;b.onclick=()=>speak(`${v}. ${hookData.find(x=>x.a===v).w}`);$('#miniVowels').appendChild(b)});
 $('#storyBtn').onclick=()=>{$('#storyModal').hidden=false};$('#closeStory').onclick=()=>{$('#storyModal').hidden=true};$('#readStory').onclick=()=>speak('En el bosque mágico, la A llevó un avión, la E invitó a un elefante, la I encendió una isla brillante, la O abrazó a un oso y la U compartió muchas uvas. Juntas descubrieron que cada una tenía un sonido especial.');$('#songBtn').onclick=()=>{speak('A, E, I, O, U. Las vocales aprendo yo. A, E, I, O, U. Con palmas las repites tú.');complete('explicar');addScore(10)};
 
@@ -164,8 +180,39 @@ $('#addCreation').onclick=()=>{const v=$('#creativeVowel').value,w=$('#creativeW
 const quiz=[{q:'¿Con qué vocal comienza AVIÓN?',a:['A','E','O'],c:0},{q:'¿Con qué vocal comienza ELEFANTE?',a:['I','U','E'],c:2},{q:'Selecciona la vocal de ISLA.',a:['I','A','O'],c:0},{q:'¿Qué palabra comienza con O?',a:['Uvas','Oso','Árbol'],c:1},{q:'¿Qué palabra comienza con U?',a:['Elefante','Isla','Uvas'],c:2},{q:'¿Cuál de estas es una vocal?',a:['M','A','P'],c:1},{q:'¿Cuántas vocales aprendimos?',a:['3','5','8'],c:1},{q:'La palabra ÁRBOL comienza con...',a:['A','E','U'],c:0},{q:'¿Cuál secuencia contiene solo vocales?',a:['A E I O U','M P S T','A B C D'],c:0},{q:'¿Qué vocal falta? A, E, I, __, U',a:['O','M','S'],c:0}];let qi=0,qscore=0,qlocked=false;
 $('#startQuiz').onclick=()=>{$('#quizIntro').classList.add('hidden');$('#quizArea').classList.remove('hidden');qi=0;qscore=0;renderQuiz()};
 function renderQuiz(){qlocked=false;const q=quiz[qi];$('#quizCounter').textContent=`Pregunta ${qi+1} de ${quiz.length}`;$('#quizScore').textContent=`Puntaje: ${qscore}`;$('#quizProgressBar').style.width=`${(qi/quiz.length)*100}%`;$('#quizQuestion').textContent=q.q;$('#quizAnswers').innerHTML='';$('#quizFeedback').textContent='';$('#quizNext').classList.add('hidden');q.a.forEach((ans,i)=>{const b=document.createElement('button');b.className='quiz-answer';b.textContent=ans;b.onclick=()=>answerQuiz(b,i,q.c);$('#quizAnswers').appendChild(b)})}
-function answerQuiz(btn,i,c){if(qlocked)return;qlocked=true;if(i===c){btn.classList.add('correct');qscore++;addScore(5);$('#quizFeedback').textContent='¡Respuesta correcta!'}else{btn.classList.add('wrong');$$('.quiz-answer')[c].classList.add('correct');$('#quizFeedback').textContent=`La respuesta correcta es ${quiz[qi].a[c]}.`}$('#quizNext').classList.remove('hidden')}
+function answerQuiz(btn,i,c){
+  if(qlocked)return;
+  qlocked=true;
+  if(i===c){
+    btn.classList.add('correct');
+    qscore++;
+    addScore(5);
+    $('#quizFeedback').textContent='¡Respuesta correcta! Identificaste muy bien la vocal.';
+    speak('Respuesta correcta. Muy bien.');
+  }else{
+    btn.classList.add('wrong');
+    $$('.quiz-answer')[c].classList.add('correct');
+    const ok=quiz[qi].a[c];
+    $('#quizFeedback').textContent=`La respuesta correcta es ${ok}. Consejo: escucha con atención el sonido inicial de la palabra.`;
+    speak(`La respuesta correcta es ${ok}. Escucha el sonido inicial para mejorar.`);
+  }
+  $('#quizNext').classList.remove('hidden')
+}
 $('#quizNext').onclick=()=>{qi++;if(qi<quiz.length)renderQuiz();else finishQuiz()};
-function finishQuiz(){complete('evaluar');$('#quizArea').classList.add('hidden');const pct=Math.round(qscore/quiz.length*100);const badge=pct>=90?'🥇':pct>=70?'🥈':'🌟';$('#quizResult').innerHTML=`<div class="result-badge">${badge}</div><h3>¡Evaluación terminada!</h3><p>Obtuviste <strong>${qscore}/${quiz.length}</strong> (${pct}%).</p><p>${pct>=70?'Reconoces muy bien las vocales.':'Sigue practicando y vuelve a intentarlo.'}</p><button class="btn primary" onclick="location.reload()">Volver a jugar</button>`;$('#quizResult').classList.remove('hidden');speak(`Obtuviste ${qscore} respuestas correctas de ${quiz.length}`); createConfetti();}
+function finishQuiz(){
+  complete('evaluar');
+  $('#quizArea').classList.add('hidden');
+  const pct=Math.round(qscore/quiz.length*100);
+  const badge=pct>=90?'🥇':pct>=70?'🥈':'🌟';
+  const guidance=pct>=90
+    ? 'Nivel excelente: dominas el reconocimiento de vocales en forma y sonido.'
+    : pct>=70
+      ? 'Buen desempeño: refuerza con 5 palabras nuevas por cada vocal.'
+      : 'Necesitas más práctica: repite Enganchar y Explorar para fortalecer el sonido inicial.';
+  $('#quizResult').innerHTML=`<div class="result-badge">${badge}</div><h3>¡Evaluación terminada!</h3><p>Obtuviste <strong>${qscore}/${quiz.length}</strong> (${pct}%).</p><p>${guidance}</p><button class="btn primary" onclick="location.reload()">Volver a jugar</button>`;
+  $('#quizResult').classList.remove('hidden');
+  speak(`Obtuviste ${qscore} respuestas correctas de ${quiz.length}. ${guidance}`);
+  createConfetti();
+}
 function createConfetti(){const colors=['#71c7ff','#7edcaa','#ffd95a','#ff9fbd','#bda1ff'];for(let i=0;i<25;i++){const piece=document.createElement('span');piece.className='confetti-piece';piece.style.left=Math.random()*100+'%';piece.style.background=colors[i%colors.length];piece.style.animationDelay=Math.random()*0.2+'s';piece.style.setProperty('--drift', `${(Math.random()>.5?1:-1)*(20+Math.random()*30)}px`);document.body.appendChild(piece);setTimeout(()=>piece.remove(),2200)}}
 $('#resetAll').onclick=()=>{localStorage.removeItem('vowelScore');localStorage.removeItem('vowelCompleted');localStorage.removeItem('studentName');localStorage.removeItem('studentAvatar');location.reload()};restore();

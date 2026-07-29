@@ -1,7 +1,8 @@
-# TODO - Corrección de audio (TTS)
+# TODO - Mejora a nivel excelencia (solo página)
 
-- [x] Revisar y actualizar `public/app.js` para usar `speechSynthesis`.
-- [x] Agregar selección/carga de voces en español con fallback.
-- [x] Reemplazar la función `speak()` para pronunciar texto real y mantener cues.
-- [x] Al desactivar sonido, detener voz activa y cues.
-- [x] Marcar tareas completadas tras aplicar cambios.
+- [x] Actualizar autoría docente visible en `public/index.html` con Lic. Angelica Pincay.
+- [x] Fortalecer fase Explorar con reflexión guiada y campo de respuesta.
+- [x] Mejorar fase Explicar con enfoque de recursos de autoría y guía pedagógica.
+- [x] Mejorar retroalimentación formativa en Evaluar en `public/app.js`.
+- [x] Ajustar mensajes UX/accesibilidad dentro de la página.
+- [x] Marcar avance final.
